@@ -1,7 +1,7 @@
 xlsx_stream = require "../"
 vows = require "vows"
 assert = require "assert"
-office = require "office"
+#office = require "office"
 
 fs = require "fs"
 path = require "path"
