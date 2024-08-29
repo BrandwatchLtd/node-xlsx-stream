@@ -4,11 +4,13 @@ xml = utils.compress
 esc = utils.escapeXML
 
 module.exports =
-  # worksheet
   worksheet:
     header: xml """
       <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
+      <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
         <sheetViews>
           <sheetView workbookViewId="0"/>
         </sheetViews>
@@ -17,10 +19,24 @@ module.exports =
     """
     footer: xml """
         </sheetData>
+    """
+    hyperLinkStart: xml """
+      <hyperlinks>
+    """
+    hyperLink: (link, rId) ->
+      parts = link.split('-')
+      escapedLink = parts[1].replace(/&/g, '&amp;')
+      xmlString = """
+        <hyperlink display="#{escapedLink}" r:id="rId#{rId}" ref="#{parts[0]}" />
+      """
+      xml xmlString
+    hyperLinkEnd: xml """
+      </hyperlinks>
+    """
+    endSheet: xml """
       </worksheet>
     """
 
-  # Static files
   sheet_related:
     "[Content_Types].xml":
       header: xml """
@@ -34,9 +50,10 @@ module.exports =
           <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
           <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
       """
-      sheet: (sheet)-> """
-          <Override PartName="/#{esc sheet.path}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
-      """
+      sheet: (sheet) ->
+        """
+          <Override PartName="/#{esc(sheet.path)}" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+        """
       footer: xml """
         </Types>
       """
@@ -46,9 +63,10 @@ module.exports =
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
       """
-      sheet: (sheet)-> """
-          <Relationship Id="rSheet#{esc sheet.index}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="#{esc sheet.rel}"/>
-          """
+      sheet: (sheet) ->
+        """
+          <Relationship Id="rSheet#{esc(sheet.index)}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="#{esc(sheet.rel)}"/>
+        """
       footer: xml """
           <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
           <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
@@ -58,36 +76,42 @@ module.exports =
     "xl/workbook.xml":
       header: xml """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+        <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+         xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
           <fileVersion appName="xl" lastEdited="5" lowestEdited="5" rupBuild="9303"/>
           <workbookPr defaultThemeVersion="124226"/>
           <bookViews>
-          <workbookView xWindow="480" yWindow="60" windowWidth="18195" windowHeight="8505"/>
+            <workbookView xWindow="480" yWindow="60" windowWidth="18195" windowHeight="8505"/>
           </bookViews>
           <sheets>
       """
-      sheet: (sheet)-> xml """
-            <sheet name="#{esc sheet.name}" sheetId="#{esc sheet.index}" r:id="rSheet#{esc sheet.index}"/>
-      """
+      sheet: (sheet) ->
+        xml """
+          <sheet name="#{esc(sheet.name)}" sheetId="#{esc(sheet.index)}" r:id="rSheet#{esc(sheet.index)}"/>
+        """
       footer: xml """
           </sheets>
           <calcPr calcId="145621"/>
         </workbook>
       """
 
-  # Styles file
-  styles: (styl)->
+  styles: (styl) ->
     numFmtItems = ""
     for item in styl.numFmts
-      numFmtItems += "  <numFmt numFmtId=\"#{item.numFmtId}\" formatCode=\"#{esc(item.formatCode)}\" />\n"
+      numFmtItems += """
+        <numFmt numFmtId="#{item.numFmtId}" formatCode="#{esc(item.formatCode)}" />
+      """
     numFmts = if numFmtItems then """
       <numFmts count="#{styl.numFmts.length}">
-        #{numFmtItems}</numFmts>
+        #{numFmtItems}
+      </numFmts>
     """ else ""
 
     cellXfItems = ""
     for item in styl.cellStyleXfs
-      cellXfItems += "  <xf xfId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" numFmtId=\"#{item.numFmtId}\" applyNumberFormat=\"1\"/>\n"
+      cellXfItems += """
+        <xf xfId="0" fontId="0" fillId="0" borderId="0" numFmtId="#{item.numFmtId}" applyNumberFormat="1"/>
+      """
     cellXfs = if cellXfItems then """
       <cellXfs count="#{Object.keys(styl.cellStyleXfs).length}">
         #{cellXfItems}
@@ -96,7 +120,9 @@ module.exports =
 
     xml """
       <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
+      <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
         #{numFmts}
         <fonts count="1" x14ac:knownFonts="1">
           <font>
@@ -138,11 +164,10 @@ module.exports =
       </styleSheet>
     """
 
-  # Static files
   statics:
     "_rels/.rels": xml """
       <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+      <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
         <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
         <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
         <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
@@ -166,17 +191,40 @@ module.exports =
         <HyperlinksChanged>false</HyperlinksChanged>
         <AppVersion>#{require('../package.json').version}</AppVersion>
       </Properties>
-      """
+    """
 
   semiStatics:
-    "docProps/core.xml": (opts)->
+    "docProps/core.xml": (opts) ->
       today = new Date().toISOString()
       """
       <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-      <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
+       xmlns:dc="http://purl.org/dc/elements/1.1/"
+       xmlns:dcterms="http://purl.org/dc/terms/"
+       xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <dc:creator>node-xlsx-stream</dc:creator>
         <cp:lastModifiedBy>node-xlsx-stream</cp:lastModifiedBy>
         <dcterms:created xsi:type="dcterms:W3CDTF">#{today}</dcterms:created>
         <dcterms:modified xsi:type="dcterms:W3CDTF">#{today}</dcterms:modified>
       </cp:coreProperties>
       """
+
+  rels:
+    "xl/worksheets/_rels/sheet1.xml.rels": (links) ->
+      xmlString = xml """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+      """
+      linksCounter = 0
+      for link in links
+        linksCounter++
+        parts = link.split('-')
+        escapedLink = parts[1].replace(/&/g, '&amp;')
+        xmlString += xml """
+          <Relationship Id="rId#{linksCounter}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="#{escapedLink}" TargetMode="External"/>
+        """
+      xmlString += xml """
+        </Relationships>
+      """
+      xmlString
