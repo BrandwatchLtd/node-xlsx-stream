@@ -33,6 +33,6 @@ jobs:
       version: ${{ needs.read-version.outputs.version }}-pr.${{ github.event.pull_request.number }}
       node-version: 20
       linter: false
-      test: false
+      test: true
       build-step: true
     secrets: inherit

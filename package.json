@@ -1,7 +1,7 @@
 {
   "name": "xlsx-stream",
   "description": "Creates SpreadsheetML (.xlsx) files in sequence with streaming interface.",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "homepage": "https://github.com/nunukim/node-xlsx-stream",
   "author": {
     "name": "Ryota Suzuki",
@@ -26,7 +26,9 @@
     "node": ">0.8.0"
   },
   "scripts": {
-    "grunt": "grunt"
+    "grunt": "grunt",
+    "test": "grunt",
+    "build": "npm install"
   },
   "devDependencies": {
     "grunt": "^1.6.1",
