@@ -1,0 +1,38 @@
+name: CI Pipeline - NPM Publish
+
+permissions:
+  checks: write
+  contents: write
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+
+jobs:
+  read-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package_version.outputs.version }}  # This makes it available to other jobs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Read version from package.json
+        id: package_version
+        run: |
+          echo "::set-output name=version::$(jq -r '.version' package.json)"
+      - name: Output the version
+        run: echo "The version in package.json is ${{ steps.package_version.outputs.version }}"
+
+  publish-pipeline:
+    needs: read-version
+    name: "Publish"
+    uses: brandwatch/bw-workflow-actions/.github/workflows/node-deploy-package.yaml@production
+    with:
+      version: ${{ needs.read-version.outputs.version }}-pr.${{ github.event.pull_request.number }}
+      node-version: 20
+      linter: false
+      test: false
+      build-step: true
+    secrets: inherit
