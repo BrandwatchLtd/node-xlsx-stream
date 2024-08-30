@@ -168,6 +168,32 @@ describe("xlsx-stream", () => {
     });
   });
 
+  describe("empty string", () => {
+    const filePath = path.join(dirPath, "emptyString.xlsx");
+    const expectedRows = [
+      ['Place Holder', ''],
+    ];
+
+    it("should create an xlsx file and preserve empty string", (done) => {
+      const x = xlsx_stream();
+      const out = fs.createWriteStream(filePath);
+      x.pipe(out);
+      expectedRows.forEach((row) => x.write(row));
+      x.end();
+      out.on("finish", () => {
+        const workSheetsFromFile = xlsx.parse(filePath);
+        const rows = workSheetsFromFile[0].data;
+
+        assert.deepStrictEqual(
+          rows,
+          expectedRows,
+          `Rows do not match. Expected ${JSON.stringify(expectedRows)}, but got ${JSON.stringify(rows)}`,
+        );
+        done();
+      });
+    });
+  });
+
   describe("Large dataset", () => {
     it("should handle large dataset", (done) => {
       const randRows = 10000 + _.random(10000);
