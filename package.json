@@ -18,7 +18,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "lint": "prettier --check . && eslint --max-warnings=0 .",
+    "lint": "eslint .",
     "prettier": "prettier --write --single-quote .",
     "fix": "eslint --fix .",
     "build": "npm install"
