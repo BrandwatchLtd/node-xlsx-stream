@@ -1,0 +1,30 @@
+# For official documentation on this workflow, please refer to the link below.
+# https://github.com/brandwatch/bw-workflow-actions/blob/dev/workflows/node/node-deploy-package.yaml.md
+name: CI Pipeline - Publish Package
+
+permissions:
+  checks: write
+  contents: write
+  packages: read
+
+#on:
+#  release:
+#    types: [ released ] # can be `published` to run on pre-release instead of production releases
+on:
+  workflow_dispatch: # used for workflow-tests
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-pipeline:
+    name: "Publish"
+    uses: brandwatch/bw-workflow-actions/.github/workflows/node-deploy-package.yaml@stage
+    with:
+      node-version: 20
+      build-step: true
+      linter: true # optional, will run "npm run lint". Set to false if you do not have a lint configuration
+      test: true # optional, will run "npm test". Set to false if you do not have a test suite yet
+      multiple-packages: false
+    secrets: inherit
