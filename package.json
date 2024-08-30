@@ -1,8 +1,8 @@
 {
-  "name": "xlsx-stream",
+  "name": "@brandwatch/xlsx-stream",
   "description": "Creates SpreadsheetML (.xlsx) files in sequence with streaming interface.",
-  "version": "0.1.2",
-  "homepage": "https://github.com/nunukim/node-xlsx-stream",
+  "version": "0.2.0",
+  "homepage": "https://github.com/BrandwatchLtd/node-xlsx-stream",
   "author": {
     "name": "Ryota Suzuki",
     "email": "suzuki@galileoscope.com",
@@ -10,40 +10,33 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nunukim/node-xlsx-stream.git"
+    "url": "git://github.com/BrandwatchLtd/node-xlsx-stream.git"
   },
-  "bugs": {
-    "url": "https://github.com/nunukim/node-xlsx-stream/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/nunukim/node-xlsx-stream/blob/master/LICENSE"
-    }
-  ],
   "main": "lib/index.js",
   "engines": {
-    "node": "~ 0.8.0"
+    "node": ">0.8.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint .",
+    "prettier": "prettier --write --single-quote .",
+    "fix": "eslint --fix .",
+    "build": "npm install"
+  },
   "devDependencies": {
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-coffee": "~0.7.0",
-    "grunt-release": "~0.6.0",
-    "grunt-vows-runner": "~0.6.0",
-    "grunt-mkdir": "~0.1.1",
-    "grunt": "~0.4.0",
-    "coffee-script": "~1.6.3",
-    "vows": "~0.7.0",
-    "excel-parser": "~0.2.1",
-    "concat-stream": "~1.2.1"
+    "eslint": "^8.39.0",
+    "eslint-config-prettier": "^9.1.0",
+    "mocha": "10.7.3",
+    "node-xlsx": "^0.24.0",
+    "concat-stream": "^2.0.0",
+    "prettier": "^3.3.3",
+    "unzipper": "^0.12.3"
   },
   "dependencies": {
-    "lodash": "~ 1.3.0",
-    "through": "~ 2.3.4",
-    "duplexer": "~ 0.1.1",
-    "archiver": "~0.4.10"
+    "lodash": "^4.17.21",
+    "through": "^2.3.8",
+    "duplexer": "^0.1.2",
+    "archiver": "^7.0.1"
   },
   "keywords": [
     "xlsx",

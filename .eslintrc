@@ -1,0 +1,35 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "extends": ["prettier"],
+    "rules": {
+        "no-eval": 2,
+        "no-console": 2,
+        "strict": [2, "global"],
+        "guard-for-in": 2,
+        "wrap-iife": 2,
+        "new-cap": 0,
+        "no-caller": 2,
+        "curly": 2,
+        "no-bitwise": 2,
+        "no-empty": 2,
+        "no-use-before-define": 2,
+        "no-new": 2,
+        "max-depth": [2, 4],
+        "no-undef": 2,
+        "max-params": [1, 4],
+        "max-statements": [1, 40],
+        "complexity": [2, 25],
+        "quotes": [2, "single"],
+        "no-mixed-requires": 0,
+        "consistent-return": 0,
+        "no-underscore-dangle": 0,
+        "camelcase": 0,
+        "semi": 2
+    }
+}
