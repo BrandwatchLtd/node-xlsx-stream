@@ -1,5 +1,5 @@
 {
-  "name": "xlsx-stream",
+  "name": "@brandwatch/xlsx-stream",
   "description": "Creates SpreadsheetML (.xlsx) files in sequence with streaming interface.",
   "version": "0.2.0",
   "homepage": "https://github.com/BrandwatchLtd/node-xlsx-stream",
